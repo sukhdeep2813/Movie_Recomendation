@@ -1,8 +1,7 @@
-// src/components/Footer.jsx
 import React from "react";
 
 function Footer() {
-  const currentYear = new Date().getFullYear(); // Get current year dynamically
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-gray-800 p-6 text-center text-gray-400 text-sm mt-auto w-full">

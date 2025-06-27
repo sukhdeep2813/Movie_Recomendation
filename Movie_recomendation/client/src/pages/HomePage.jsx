@@ -1,4 +1,3 @@
-// src/pages/HomePage.jsx
 import React, { useState, useMemo } from "react";
 import SearchBar from "../components/SearchBar";
 import GenreFilter from "../components/GenreFilter";
@@ -29,26 +28,22 @@ function HomePage() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setSelectedGenreId(null); // Clear genre filter when searching
+    setSelectedGenreId(null);
     console.log("Searching for:", query);
   };
 
   const handleSelectGenre = (genreId) => {
     setSelectedGenreId(genreId);
-    setSearchQuery(""); // Clear search query when selecting genre
+    setSearchQuery("");
     console.log("Filtering by genre ID:", genreId);
   };
 
-  // In a real app, onMovieClick would use useNavigate to go to /movie/:id
-  // For now, we'll keep it as a console log, but prepare for it later.
   const handleMovieClick = (movieId) => {
     console.log("Clicked movie with ID:", movieId);
-    // This will be replaced by navigation logic soon!
   };
 
   return (
     <div className="flex flex-col items-center">
-      {/* Main heading for the home page content */}
       <h1 className="text-4xl font-bold text-white mb-2">Movie Recommender</h1>
       <p className="text-lg text-gray-400 mb-8">
         Discover your next favorite films.

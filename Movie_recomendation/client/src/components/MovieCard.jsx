@@ -1,10 +1,8 @@
-// src/components/MovieCard.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 function MovieCard({ movie }) {
-  // Removed onClick prop
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate();
 
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
@@ -18,13 +16,13 @@ function MovieCard({ movie }) {
     : "N/A";
 
   const handleCardClick = () => {
-    navigate(`/movie/${movie.id}`); // Navigate to the movie detail page
+    navigate(`/movie/${movie.id}`);
   };
 
   return (
     <div
       className="bg-gray-700 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
-      onClick={handleCardClick} // Use local click handler
+      onClick={handleCardClick} 
     >
       <img
         src={posterUrl}

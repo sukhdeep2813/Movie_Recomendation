@@ -1,17 +1,14 @@
-// src/components/MovieDetail.jsx
-import React, { useMemo } from "react"; // Import useMemo
-import { useParams, useNavigate } from "react-router-dom"; // Import useParams and useNavigate
-import { mockMovies, mockGenres } from "../data/MovieData"; // Import mockMovies
+import React, { useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { mockMovies, mockGenres } from "../data/MovieData";
 
 function MovieDetail() {
-  // No props needed anymore
-  const { id } = useParams(); // Get the 'id' parameter from the URL
-  const navigate = useNavigate(); // Get the navigate function
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Use useMemo to find the movie based on the URL ID
   const movie = useMemo(() => {
-    return mockMovies.find((m) => m.id === parseInt(id)); // Convert id to integer for comparison
-  }, [id]); // Re-find movie if URL ID changes
+    return mockMovies.find((m) => m.id === parseInt(id));
+  }, [id]);
 
   if (!movie) {
     return (
@@ -37,8 +34,7 @@ function MovieDetail() {
     .filter(Boolean);
 
   const handleBack = () => {
-    navigate(-1); // Go back to the previous page in history
-    // Or navigate('/'); to always go to the homepage
+    navigate(-1);
   };
 
   return (
@@ -64,7 +60,6 @@ function MovieDetail() {
         </div>
         <p className="text-gray-300 leading-relaxed mb-6">{movie.overview}</p>
 
-        {/* Placeholder for more details */}
         <div className="text-gray-400 text-sm mt-auto border-t border-gray-600 pt-4">
           <p>Director: Christopher Nolan (Example)</p>
           <p>Main Cast: Cillian Murphy, Emily Blunt, Matt Damon (Example)</p>

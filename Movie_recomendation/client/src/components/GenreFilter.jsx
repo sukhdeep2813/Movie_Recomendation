@@ -1,4 +1,3 @@
-// src/components/GenreFilter.jsx
 import React from "react";
 
 function GenreFilter({ genres, selectedGenreId, onSelectGenre }) {

@@ -1,12 +1,11 @@
-// src/components/Navbar.jsx
 import React from "react";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom"; 
 
 function Navbar() {
   return (
     <nav className="bg-gray-800 p-4 shadow-lg mb-8">
       <div className="max-w-5xl mx-auto flex justify-between items-center">
-        {/* Logo/Site Title - use Link to home */}
+        
         <Link
           to="/"
           className="text-white text-3xl font-bold hover:text-blue-400 transition-colors duration-200"
@@ -14,7 +13,7 @@ function Navbar() {
           CineGuide
         </Link>
 
-        {/* Navigation Links - use Link */}
+        
         <div className="space-x-6 text-lg">
           <Link
             to="/"

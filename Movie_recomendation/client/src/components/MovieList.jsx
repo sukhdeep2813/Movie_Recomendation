@@ -1,9 +1,7 @@
-// src/components/MovieList.jsx
 import React from "react";
 import MovieCard from "./MovieCard";
 
 function MovieList({ movies }) {
-  // Removed onMovieClick prop
   if (!movies || movies.length === 0) {
     return (
       <div className="text-center text-gray-400 text-2xl mt-10">

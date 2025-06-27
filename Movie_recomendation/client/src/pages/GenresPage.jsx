@@ -1,4 +1,3 @@
-// src/pages/GenresPage.jsx
 import React from "react";
 import { mockGenres } from "../data/MovieData";
 import { Link } from "react-router-dom";
@@ -14,7 +13,7 @@ function GenresPage() {
         {mockGenres.map((genre) => (
           <Link
             key={genre.id}
-            to={`/?genre=${genre.id}`} // Link back to home page with genre filter
+            to={`/?genre=${genre.id}`}
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out"
           >
             {genre.name}
