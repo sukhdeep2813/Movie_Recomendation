@@ -27,8 +27,6 @@ function SearchBar({ onSearch }) {
   return (
     <div className="flex justify-center items-center gap-4 p-4 bg-gray-700 rounded-lg shadow-md mb-8">
       <div className="relative flex-grow">
-        {" "}
-        {}
         <input
           type="text"
           placeholder="Search for a movie..."
