@@ -1,0 +1,52 @@
+const API_KEY = 'YOUR_API_KEY_HERE';
+const BASE_URL = 'https://api.themoviedb.org/3';
+export const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/'; 
+
+
+async function tmdbFetch(endpoint) {
+  const url = `${BASE_URL}${endpoint}?api_key=${API_KEY}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from TMDb:", error);
+    throw error; 
+  }
+}
+
+
+
+// popular movies
+export const fetchPopularMovies = async () => {
+  const data = await tmdbFetch('/movie/popular');
+  return data.results; 
+};
+
+//movies by query
+export const searchMovies = async (query) => {
+  if (!query) return []; 
+  const data = await tmdbFetch(`/search/movie?query=${encodeURIComponent(query)}`);
+  return data.results;
+};
+
+// specific movie by ID
+export const fetchMovieDetails = async (movieId) => {
+  const data = await tmdbFetch(`/movie/${movieId}`);
+  return data;
+};
+
+// movie genres
+export const fetchGenres = async () => {
+  const data = await tmdbFetch('/genre/movie/list');
+  return data.genres; 
+};
+
+
+export const getImageUrl = (path, size = 'w500') => {
+    if (!path) return 'https://via.placeholder.com/500x750?text=No+Image'; // Placeholder
+    return `${IMAGE_BASE_URL}${size}${path}`;
+};
