@@ -45,6 +45,6 @@ export const fetchGenres = async () => {
 };
 
 export const getImageUrl = (path, size = "w500") => {
-  if (!path) return "https://via.placeholder.com/500x750?text=No+Image"; // Placeholder
+  if (!path) return "https://via.placeholder.com/500x750?text=No+Image"; 
   return `${IMAGE_BASE_URL}${size}${path}`;
 };
