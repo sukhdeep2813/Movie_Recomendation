@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import GenreFilter from "../components/GenreFilter";
 import MovieList from "../components/MovieList";
-import { mockMovies, mockGenres } from "../data/MovieData";
 
 import { fetchPopularMovies, searchMovies, fetchGenres } from "../api/tmbd";
 
