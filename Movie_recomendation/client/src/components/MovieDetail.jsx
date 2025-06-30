@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails, IMAGE_BASE_URL } from "../api/tmbd";
+import { WatchlistContext } from "../context/WatchlistContextObject";
 
 function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { addMovieToWatchlist, removeMovieFromWatchlist, isMovieInWatchlist } =
+    useContext(WatchlistContext);
 
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,7 +18,6 @@ function MovieDetail() {
     const getMovieDetails = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const data = await fetchMovieDetails(id);
         setMovieDetails(data);
@@ -30,6 +33,10 @@ function MovieDetail() {
       getMovieDetails();
     }
   }, [id]);
+
+  const inWatchlist = movieDetails
+    ? isMovieInWatchlist(movieDetails.id)
+    : false;
 
   if (loading) {
     return (
@@ -72,6 +79,14 @@ function MovieDetail() {
     navigate(-1);
   };
 
+  const handleWatchlistToggle = () => {
+    if (inWatchlist) {
+      removeMovieFromWatchlist(movieDetails.id);
+    } else {
+      addMovieToWatchlist(movieDetails.id);
+    }
+  };
+
   return (
     <div className="bg-gray-700 rounded-lg shadow-xl p-6 flex flex-col md:flex-row gap-6 items-start">
       <div className="md:w-1/3 flex-shrink-0">
@@ -94,20 +109,34 @@ function MovieDetail() {
           )}
         </div>
         <p className="text-gray-300 leading-relaxed mb-6">
-          {movieDetails.overview || "No overview available."}{" "}
+          {movieDetails.overview || "No overview available."}
         </p>
 
         <div className="text-gray-400 text-sm mt-auto border-t border-gray-600 pt-4">
-          <p>Tagline: {movieDetails.tagline || "N/A"}</p>{" "}
-          <p>Status: {movieDetails.status || "N/A"}</p>{" "}
+          <p>Tagline: {movieDetails.tagline || "N/A"}</p>
+          <p>Status: {movieDetails.status || "N/A"}</p>
         </div>
 
-        <button
-          onClick={handleBack}
-          className="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-700 transition duration-300 ease-in-out self-end"
-        >
-          ← Back to Movies
-        </button>
+        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
+          <button
+            onClick={handleWatchlistToggle}
+            className={`px-6 py-3 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out
+              ${
+                inWatchlist
+                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-gray-700"
+                  : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-700"
+              } text-white`}
+          >
+            {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+          </button>
+
+          <button
+            onClick={handleBack}
+            className="px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-700 transition duration-300 ease-in-out"
+          >
+            ← Back to Movies
+          </button>
+        </div>
       </div>
     </div>
   );
