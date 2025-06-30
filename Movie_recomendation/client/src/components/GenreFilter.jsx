@@ -1,7 +1,7 @@
 import React from "react";
 
 function GenreFilter({ genres, selectedGenreId, onSelectGenre }) {
-  // Define an array of colors to cycle through
+  
   const colors = [
     "bg-red-600",
     "bg-green-600",
