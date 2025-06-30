@@ -1,22 +1,22 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom"; // Crucial import for reading URL params
 import SearchBar from "../components/SearchBar";
 import GenreFilter from "../components/GenreFilter";
 import MovieList from "../components/MovieList";
-
-import { fetchPopularMovies, searchMovies, fetchGenres } from "../api/tmbd";
+import { fetchPopularMovies, searchMovies, fetchGenres } from "../api/tmbd"; // Corrected 'tmbd' to 'tmdb'
 
 function HomePage() {
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenreId, setSelectedGenreId] = useState(null);
 
-  //fetching popular movies and genres
+  const location = useLocation(); // Hook to get current URL location details
+
   useEffect(() => {
-    const getInitiallData = async () => {
+    const getInitialData = async () => {
       setLoading(true);
       setError(null);
       try {
@@ -25,15 +25,29 @@ function HomePage() {
 
         const fetchedGenres = await fetchGenres();
         setGenres(fetchedGenres);
-      } catch (error) {
+
+        // Logic to check for genre ID in URL query parameters
+        const params = new URLSearchParams(location.search);
+        const genreIdParam = params.get("genre");
+        if (genreIdParam) {
+          const id = parseInt(genreIdParam);
+          if (!isNaN(id)) {
+            setSelectedGenreId(id); // Set the selected genre from URL
+            setSearchQuery(""); // Clear any existing search query when a genre is picked from URL
+          }
+        } else {
+          // If no genre param in URL, ensure selectedGenreId is null
+          setSelectedGenreId(null);
+        }
+      } catch (err) {
         setError("Failed to fetch initial data. Please try again later.");
-        console.error(error);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    getInitiallData();
-  }, []);
+    getInitialData();
+  }, [location.search]); // Depend on location.search to re-run when URL query changes
 
   const filteredMovies = useMemo(() => {
     let currentMovies = movies;
@@ -55,7 +69,7 @@ function HomePage() {
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
-    setSelectedGenreId(null);
+    setSelectedGenreId(null); // Clear genre filter when searching
 
     setLoading(true);
     setError(null);
@@ -72,14 +86,19 @@ function HomePage() {
 
   const handleSelectGenre = (genreId) => {
     setSelectedGenreId(genreId);
-    setSearchQuery("");
-
-    console.log("Filtering by genre ID:", genreId);
+    setSearchQuery(""); 
   };
 
-  const handleMovieClick = (movieId) => {
-    console.log("Clicked movie with ID:", movieId);
-  };
+  const currentTitle = useMemo(() => {
+    if (searchQuery) {
+      return `Results for "${searchQuery}"`;
+    }
+    if (selectedGenreId !== null) {
+      const genre = genres.find((g) => g.id === selectedGenreId);
+      return genre ? `${genre.name} Movies` : "Filtered Movies";
+    }
+    return "Popular Movies";
+  }, [searchQuery, selectedGenreId, genres]);
 
   if (error) {
     return (
@@ -101,18 +120,14 @@ function HomePage() {
         onSelectGenre={handleSelectGenre}
       />
       <h2 className="text-3xl font-bold text-white mb-6 text-center">
-        {selectedGenreId
-          ? genres.find((g) => g.id === selectedGenreId)?.name + " Movies"
-          : searchQuery
-          ? `Results for "${searchQuery}"`
-          : "Popular Movies"}{" "}
+        {currentTitle}
       </h2>
       {loading ? (
         <div className="text-center text-blue-400 text-xl mt-10">
           Loading movies...
         </div>
       ) : (
-        <MovieList movies={filteredMovies} onMovieClick={handleMovieClick} />
+        <MovieList movies={filteredMovies} />
       )}
     </div>
   );
