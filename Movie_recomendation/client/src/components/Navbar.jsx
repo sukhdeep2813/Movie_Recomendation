@@ -1,19 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
     <nav className="bg-gray-800 p-4 shadow-lg mb-8">
       <div className="max-w-5xl mx-auto flex justify-between items-center">
-        
         <Link
           to="/"
           className="text-white text-3xl font-bold hover:text-blue-400 transition-colors duration-200"
         >
-          CineGuide
+          NeuroGuide
         </Link>
 
-        
         <div className="space-x-6 text-lg">
           <Link
             to="/"
