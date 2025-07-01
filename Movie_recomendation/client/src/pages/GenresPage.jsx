@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchGenres } from "../api/tmbd";
+import { fetchGenres } from "../api/tmdb";
 
 function GenresPage() {
   const [genres, setGenres] = useState([]);
@@ -25,7 +25,6 @@ function GenresPage() {
     getGenres();
   }, []);
 
-  
   const handleGenreClick = (genreId) => {
     navigate(`/?genre=${genreId}`);
   };
