@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchMovieDetails, IMAGE_BASE_URL } from "../api/tmbd";
+import { fetchMovieDetails, IMAGE_BASE_URL } from "../api/tmdb";
 import { WatchlistContext } from "../context/WatchlistContextObject";
 
 function MovieDetail() {
