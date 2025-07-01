@@ -1,17 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 function Navbar() {
   return (
     <nav className="bg-gray-800 p-4 shadow-lg mb-8">
       <div className="max-w-5xl mx-auto flex justify-between items-center">
-        <Link
-          to="/"
-          className="text-white text-3xl font-bold hover:text-blue-400 transition-colors duration-200"
-        >
-          NeuroGuide
-        </Link>
-
+        <div className="flex items-center text-white text-3xl font-bold  transition-colors duration-200">
+          <span>NeuroGuide</span>
+          <img
+            src={logo}
+            alt="NeuroGuide Logo"
+            className="h-10 w-auto ml-3 rounded-md"
+          />
+        </div>
         <div className="space-x-6 text-lg">
           <Link
             to="/"
