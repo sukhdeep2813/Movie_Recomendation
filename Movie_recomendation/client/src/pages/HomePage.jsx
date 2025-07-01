@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useLocation } from "react-router-dom"; // Crucial import for reading URL params
+import { useLocation } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import GenreFilter from "../components/GenreFilter";
 import MovieList from "../components/MovieList";
-import { fetchPopularMovies, searchMovies, fetchGenres } from "../api/tmbd"; // Corrected 'tmbd' to 'tmdb'
+import { fetchPopularMovies, searchMovies, fetchGenres } from "../api/tmdb";
 
 function HomePage() {
   const [movies, setMovies] = useState([]);
@@ -13,41 +13,45 @@ function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenreId, setSelectedGenreId] = useState(null);
 
-  const location = useLocation(); // Hook to get current URL location details
+  const location = useLocation();
+
+  const getInitialData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetchedMovies = await fetchPopularMovies();
+      setMovies(fetchedMovies);
+
+      const fetchedGenres = await fetchGenres();
+      setGenres(fetchedGenres);
+    } catch (err) {
+      setError("Failed to fetch initial data. Please try again later.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getInitialData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const fetchedMovies = await fetchPopularMovies();
-        setMovies(fetchedMovies);
+    const checkUrlAndFetch = async () => {
+      const params = new URLSearchParams(location.search);
+      const genreIdParam = params.get("genre");
 
-        const fetchedGenres = await fetchGenres();
-        setGenres(fetchedGenres);
-
-        // Logic to check for genre ID in URL query parameters
-        const params = new URLSearchParams(location.search);
-        const genreIdParam = params.get("genre");
-        if (genreIdParam) {
-          const id = parseInt(genreIdParam);
-          if (!isNaN(id)) {
-            setSelectedGenreId(id); // Set the selected genre from URL
-            setSearchQuery(""); // Clear any existing search query when a genre is picked from URL
-          }
-        } else {
-          // If no genre param in URL, ensure selectedGenreId is null
-          setSelectedGenreId(null);
+      if (genreIdParam) {
+        const id = parseInt(genreIdParam);
+        if (!isNaN(id)) {
+          setSelectedGenreId(id);
+          setSearchQuery("");
         }
-      } catch (err) {
-        setError("Failed to fetch initial data. Please try again later.");
-        console.error(err);
-      } finally {
-        setLoading(false);
+      } else {
+        setSelectedGenreId(null);
+        if (!searchQuery) {
+          await getInitialData();
+        }
       }
     };
-    getInitialData();
-  }, [location.search]); // Depend on location.search to re-run when URL query changes
+    checkUrlAndFetch();
+  }, [location.search, searchQuery]);
 
   const filteredMovies = useMemo(() => {
     let currentMovies = movies;
@@ -69,15 +73,20 @@ function HomePage() {
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
-    setSelectedGenreId(null); // Clear genre filter when searching
+    setSelectedGenreId(null);
 
     setLoading(true);
     setError(null);
     try {
-      const searchedMovies = await searchMovies(query);
-      setMovies(searchedMovies);
+      let fetchedData;
+      if (query.trim()) {
+        fetchedData = await searchMovies(query);
+      } else {
+        fetchedData = await fetchPopularMovies();
+      }
+      setMovies(fetchedData);
     } catch (err) {
-      setError("Failed to search movies. Please try again.");
+      setError("Failed to fetch movies. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -86,7 +95,7 @@ function HomePage() {
 
   const handleSelectGenre = (genreId) => {
     setSelectedGenreId(genreId);
-    setSearchQuery(""); 
+    setSearchQuery("");
   };
 
   const currentTitle = useMemo(() => {
