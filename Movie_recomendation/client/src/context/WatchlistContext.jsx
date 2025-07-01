@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { fetchMovieDetails } from "../api/tmbd";
-import { WatchlistContext } from "./WatchlistContextObject"; 
+import { fetchMovieDetails } from "../api/tmdb";
+import { WatchlistContext } from "./WatchlistContextObject";
 
 export const WatchlistProvider = ({ children }) => {
   const [watchlistIds, setWatchlistIds] = useState(() => {
