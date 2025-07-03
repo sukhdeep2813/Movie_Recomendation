@@ -7,6 +7,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 //  Core   --  client-server communication
@@ -19,6 +20,15 @@ app.use(
   })
 );
 app.use(express.json());
+
+// Database connection
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("MongoDB is connected sucessfully"))
+  .catch((err) => {
+    console.error("MongoDB  connected", err.message);
+    process.exit(1);
+  });
 
 app.get("/", (req, res) => {
   res.send("Movie Recommender Backend API is running!");
