@@ -8,37 +8,40 @@ router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    //checking if user exists
+    // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ msg: "User already Exist" });
+      return res.status(400).json({ msg: "User already exists" });
     }
 
-    //if not  --> creting new user
+    // Create new user
     user = new User({ username, email, password });
 
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
+    // Save user to DB
     await user.save();
 
-    //playload
+    // Payload for JWT
     const payload = {
       user: {
         id: user.id,
       },
     };
 
+    // Sign JWT token
     jwt.sign(
       payload,
-      process.env.JWT_Secret,
-      { expressIn: "1D" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" },
       (err, token) => {
         if (err) throw err;
         res.json({ token });
       }
     );
-  } catch (error) {
+  } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error during registration");
   }
@@ -48,26 +51,22 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Check if user exists
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid Credentials" });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid Credentials" });
+      return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // Create JWT payload
     const payload = {
       user: {
         id: user.id,
       },
     };
 
-    // Sign the token
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
