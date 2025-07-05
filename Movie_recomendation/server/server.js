@@ -40,7 +40,7 @@ const watchlistRoutes = require("./routes/watchlist");
 //const recommendationRoutes = require("./routes/recommendations");
 
 app.use("/api/auth", autoRoutes);
-app.use("api/watchlist", watchlistRoutes);
+app.use("/api/watchlist", watchlistRoutes);
 //app.use("/api/recommendations", recommendationRoutes);
 
 // server to start
