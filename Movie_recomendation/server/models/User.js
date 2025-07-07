@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     match: [/.+@.+\..+/, "Please enter a valid email address"],
   },
-  passwoed: {
+  password: {
     type: String,
     required: true,
   },
@@ -25,3 +25,5 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+module.exports = mongoose.model("User", UserSchema);
