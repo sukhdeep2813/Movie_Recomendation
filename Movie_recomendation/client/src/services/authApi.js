@@ -25,7 +25,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await authApi.post("/auth/login", credentials);
-    return response.data; // This should ideally contain a JWT token and/or user info
+    return response.data;
   } catch (error) {
     console.error("Login failed:", error.response?.data || error.message);
     throw error.response?.data || new Error("Login failed");
