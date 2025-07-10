@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authApi";
-// Import the API function
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -43,16 +42,17 @@ function RegisterPage() {
         email: "",
         password: "",
         confirmPassword: "",
-      }); // Clear form
+      });
 
-      // Optional: Redirect to login page after a short delay
       setTimeout(() => {
         navigate("/login");
       }, 2000);
     } catch (err) {
-      setError(
-        err.message || "An unexpected error occurred during registration."
-      );
+      const errorMessage =
+        err.response && err.response.data && err.response.data.msg
+          ? err.response.data.msg
+          : err.message || "An unexpected error occurred during registration.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ function RegisterPage() {
               value={formData.username}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Enter your username"
             />
           </div>
@@ -109,7 +109,7 @@ function RegisterPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Enter your email"
             />
           </div>
@@ -127,7 +127,7 @@ function RegisterPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Enter your password"
             />
           </div>
@@ -145,7 +145,7 @@ function RegisterPage() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Confirm your password"
             />
           </div>
