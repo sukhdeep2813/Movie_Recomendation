@@ -11,6 +11,7 @@ import AboutPage from "./pages/AboutPage";
 import RegisterPage from "./pages/RegisterPage";
 
 import { WatchlistProvider } from "./context/WatchlistContext";
+import LoginPage from "./pages/Login";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/mylist" element={<MyListPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
             <Route
               path="*"
