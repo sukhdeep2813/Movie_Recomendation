@@ -12,6 +12,8 @@ import RegisterPage from "./pages/RegisterPage";
 
 import { WatchlistProvider } from "./context/WatchlistContext";
 import LoginPage from "./pages/Login";
+import ChatbotPage from "./pages/ChatbotPage";
+import FloatingAiButton from "./components/FloatingAiButton";
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/chatbot" element={<ChatbotPage />} />
 
             <Route
               path="*"
@@ -40,6 +43,7 @@ function App() {
             />
           </Routes>
         </main>
+        <FloatingAiButton />
         <Footer />
       </div>
     </WatchlistProvider>
