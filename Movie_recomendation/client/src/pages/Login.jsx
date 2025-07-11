@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/authApi";
+import { Link } from "react-router-dom";
+import { loginUser } from "../services/authApi"; // Ensure this path is correct
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function LoginPage() {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  //const navigate = useNavigate(); // Keep navigate for potential future use or fallback
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,11 +24,22 @@ function LoginPage() {
       const response = await loginUser(formData);
       console.log("Login successful:", response);
 
+      // Store the token in localStorage
       localStorage.setItem("userToken", response.token);
 
-      navigate("/");
+      // --- CRITICAL CHANGE HERE ---
+      // Instead of using navigate, force a full page reload.
+      // This will cause App.jsx and Navbar.jsx to re-render from scratch,
+      // allowing Navbar to pick up the new userToken from localStorage.
+      window.location.reload();
+      // --- END CRITICAL CHANGE ---
     } catch (err) {
-      setError(err.message || "An unexpected error occurred during login.");
+      // Access the specific error message from the backend response
+      const errorMessage =
+        err.response && err.response.data && err.response.data.msg
+          ? err.response.data.msg
+          : err.message || "An unexpected error occurred during login.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -62,7 +73,7 @@ function LoginPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Your email"
             />
           </div>
@@ -80,7 +91,7 @@ function LoginPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-gray-700 border-gray-600 placeholder-gray-400 text-white"
               placeholder="Your password"
             />
           </div>
