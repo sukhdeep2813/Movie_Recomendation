@@ -1,52 +1,52 @@
-// server/middleware/auth.js
-const jwt = require("jsonwebtoken"); // Import jsonwebtoken
-// If you plan to fetch the user from the DB and attach it to req.user,
-// you'll also need your User model here:
-// const User = require('../models/User');
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-// Load environment variables if this file is accessed directly or before index.js
-// It's generally better to have dotenv.config() at the very top of index.js
-// but including it here as a fallback can sometimes prevent issues.
-// require('dotenv').config();
+// It's generally best practice to ensure dotenv.config() is called once
+// at the very top of your main server entry file (e.g., server/index.js).
+// However, if for some reason this middleware might be loaded before dotenv is
+// fully initialized in a development environment, you could uncomment the line below.
+// For production, rely on process.env being set up by your hosting environment.
+require("dotenv").config();
 
-module.exports = function (req, res, next) {
+module.exports = async function (req, res, next) {
   let token;
 
-  // 1. Prioritize checking for 'Bearer' token in 'Authorization' header (standard)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(" ")[1]; // Extract the token after 'Bearer '
-  }
-  // 2. Fallback to checking 'x-auth-token' header (if frontend sends it this way as well)
-  else if (req.header("x-auth-token")) {
+    token = req.headers.authorization.split(" ")[1];
+  } else if (req.header("x-auth-token")) {
     token = req.header("x-auth-token");
   }
 
-  // If no token found in either place, deny authorization
   if (!token) {
     return res.status(401).json({ msg: "No token, authorization denied" });
   }
 
   try {
-    // Verify the token using your JWT_SECRET
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach the decoded user payload to the request object
-    // Assuming your JWT payload is like { user: { id: 'someUserId' } }
-    req.user = decoded.user;
+    req.user = await User.findById(decoded.user.id).select("-password");
 
-    // Optional: Fetch full user details from the database if needed for later middleware/routes
-    // Make this middleware 'async' if you uncomment the line below
-    // req.user = await User.findById(decoded.user.id).select('-password');
+    if (!req.user) {
+      console.error("Authentication error: User not found for valid token.");
+      return res
+        .status(401)
+        .json({ msg: "User not found, authorization denied" });
+    }
 
-    // VERY IMPORTANT: Call next() to pass control to the next middleware or the route handler
     next();
   } catch (error) {
-    // Log the actual error for debugging on the server
     console.error("Authentication error:", error.message);
-    // Send a 401 response if the token is invalid or expired
+
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ msg: "Token has expired" });
+    }
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ msg: "Token is invalid" });
+    }
+
     res.status(401).json({ msg: "Token is not valid" });
   }
 };
