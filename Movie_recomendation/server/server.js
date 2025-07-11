@@ -37,11 +37,11 @@ app.get("/", (req, res) => {
 //Importing and using Routes
 const autoRoutes = require("./routes/auth");
 const watchlistRoutes = require("./routes/watchlist");
-//const recommendationRoutes = require("./routes/recommendations");
+const recommendationRoutes = require("./routes/chatbot");
 
 app.use("/api/auth", autoRoutes);
 app.use("/api/watchlist", watchlistRoutes);
-//app.use("/api/recommendations", recommendationRoutes);
+app.use("/api/chatbot", recommendationRoutes);
 
 // server to start
 app.listen(PORT, () => {
