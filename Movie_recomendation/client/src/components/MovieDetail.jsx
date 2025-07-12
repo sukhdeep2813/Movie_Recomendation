@@ -101,7 +101,7 @@ function MovieDetail() {
           {movieDetails.title} ({releaseYear})
         </h2>
         <div className="flex items-center text-lg text-gray-300 mb-4">
-          <span className="bg-yellow-500 text-gray-900 px-3 py-1 rounded-full font-bold mr-3">
+          <span className="bg-green-600 text-gray-900 px-3 py-1 rounded-lg font-bold mr-3">
             ⭐ {formattedRating}
           </span>
           {movieGenres !== "N/A" && (

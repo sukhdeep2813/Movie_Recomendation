@@ -26,7 +26,7 @@ function MovieCard({ movie }) {
   };
 
   const handleWatchlistToggle = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (inWatchlist) {
       removeMovieFromWatchlist(movie.id);
     } else {
@@ -53,7 +53,7 @@ function MovieCard({ movie }) {
           {movie.title}
         </h3>
         <div className="flex justify-between items-center text-sm text-gray-400">
-          <span className="bg-yellow-500 text-gray-900 px-2 py-0.5 rounded-full font-bold">
+          <span className="bg-green-500 text-gray-900 px-2 py-0.5 rounded-lg font-bold">
             ⭐ {formattedRating}
           </span>
           <span>{releaseYear}</span>
