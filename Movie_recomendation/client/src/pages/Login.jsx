@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { loginUser } from "../services/authApi"; // Ensure this path is correct
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../services/authApi";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function LoginPage() {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  //const navigate = useNavigate(); // Keep navigate for potential future use or fallback
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,17 +24,11 @@ function LoginPage() {
       const response = await loginUser(formData);
       console.log("Login successful:", response);
 
-      // Store the token in localStorage
       localStorage.setItem("userToken", response.token);
 
-      // --- CRITICAL CHANGE HERE ---
-      // Instead of using navigate, force a full page reload.
-      // This will cause App.jsx and Navbar.jsx to re-render from scratch,
-      // allowing Navbar to pick up the new userToken from localStorage.
+      navigate("/");
       window.location.reload();
-      // --- END CRITICAL CHANGE ---
     } catch (err) {
-      // Access the specific error message from the backend response
       const errorMessage =
         err.response && err.response.data && err.response.data.msg
           ? err.response.data.msg
