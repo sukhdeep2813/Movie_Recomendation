@@ -31,7 +31,6 @@ function RegisterPage() {
     }
 
     try {
-      // Destructure to send only necessary data to the backend
       const { confirmPassword, ...dataToSend } = formData;
       const response = await registerUser(dataToSend);
       setSuccessMessage(
