@@ -1,3 +1,4 @@
+// client/src/api/tmdb.js
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = import.meta.env.VITE_TMDB_BASE_URL;
 export const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
@@ -44,6 +45,21 @@ export const fetchGenres = async () => {
   const data = await tmdbFetch("/genre/movie/list");
   return data.genres;
 };
+
+
+export const fetchMoviesByGenre = async (genreId) => {
+  try {
+    const data = await tmdbFetch(`/discover/movie?with_genres=${genreId}`);
+    return data.results;
+  } catch (error) {
+    console.error(
+      `Error fetching movies for genre ${genreId} from TMDb:`,
+      error
+    );
+    throw error;
+  }
+};
+
 
 export const getImageUrl = (path, size = "w500") => {
   if (!path) return "https://via.placeholder.com/500x750?text=No+Image";
