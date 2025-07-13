@@ -1,12 +1,21 @@
-// client/src/pages/ChatbotPage.jsx
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// Get your backend API base URL from environment variables
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 function ChatbotPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      console.log("ChatbotPage: No token found, redirecting to login.");
+      navigate("/login");
+    }
+  }, [navigate]);
+
   const [messages, setMessages] = useState([
     {
       type: "bot",
@@ -53,10 +62,22 @@ function ChatbotPage() {
         "Error sending message to chatbot:",
         error.response?.data || error.message
       );
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "bot", text: "Oops! Something went wrong. Please try again." },
-      ]);
+
+      if (error.response && error.response.status === 401) {
+        console.log(
+          "Chatbot session expired or token invalid, redirecting to login."
+        );
+        localStorage.removeItem("userToken");
+        navigate("/login");
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: "bot",
+            text: "Oops! Something went wrong. Please try again.",
+          },
+        ]);
+      }
     } finally {
       setLoading(false);
     }
@@ -67,6 +88,15 @@ function ChatbotPage() {
       handleSendMessage();
     }
   };
+
+  const token = localStorage.getItem("userToken");
+  if (!token) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <p>You need to be logged in to use the chatbot. Redirecting...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] bg-gray-900 rounded-lg shadow-xl p-4">
