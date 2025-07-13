@@ -16,7 +16,7 @@ function MovieList({ movies }) {
       className="relative w-full max-w-5xl mx-auto p-6 rounded-lg shadow-lg mb-8 overflow-hidden" // Added overflow-hidden to contain shadow with border-radius
       style={{
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover", // Ensures image covers the entire container
+        backgroundSize: "cover",
         backgroundPosition: "center", // Centers the background image
         backgroundRepeat: "no-repeat", // Prevents image from repeating
         backgroundAttachment: "fixed", // Keeps background fixed during scroll (optional, remove if you want it to scroll with content)
