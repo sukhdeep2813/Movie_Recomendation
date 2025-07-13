@@ -1,11 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// It's generally best practice to ensure dotenv.config() is called once
-// at the very top of your main server entry file (e.g., server/index.js).
-// However, if for some reason this middleware might be loaded before dotenv is
-// fully initialized in a development environment, you could uncomment the line below.
-// For production, rely on process.env being set up by your hosting environment.
 require("dotenv").config();
 
 module.exports = async function (req, res, next) {
