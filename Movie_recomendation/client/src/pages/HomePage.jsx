@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import GenreFilter from "../components/GenreFilter";
 import MovieList from "../components/MovieList";
@@ -19,6 +19,7 @@ function HomePage() {
   const [selectedGenreId, setSelectedGenreId] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getGenres = async () => {
@@ -37,79 +38,58 @@ function HomePage() {
     const genreIdFromUrl = params.get("genre");
     const searchFromUrl = params.get("query");
 
-    let newSelectedGenreId = null;
-    let newSearchQuery = "";
+    let currentSelectedGenreId = null;
+    let currentSearchQuery = "";
 
     if (genreIdFromUrl) {
       const id = parseInt(genreIdFromUrl);
       if (!isNaN(id)) {
-        newSelectedGenreId = id;
-
-        newSearchQuery = "";
+        currentSelectedGenreId = id;
       }
     } else if (searchFromUrl) {
-      newSearchQuery = searchFromUrl;
-
-      newSelectedGenreId = null;
-    } else {
-      newSelectedGenreId = null;
-      newSearchQuery = "";
+      currentSearchQuery = searchFromUrl;
     }
 
-    setSelectedGenreId((prevId) =>
-      prevId !== newSelectedGenreId ? newSelectedGenreId : prevId
-    );
-    setSearchQuery((prevQuery) =>
-      prevQuery !== newSearchQuery ? newSearchQuery : prevQuery
-    );
+    setSelectedGenreId(currentSelectedGenreId);
+    setSearchQuery(currentSearchQuery);
 
-    const fetchMoviesBasedOnState = async () => {
+    const fetchMoviesBasedOnUrlParams = async () => {
       setLoading(true);
       setError(null);
       try {
         let fetchedData;
-        if (newSearchQuery.trim()) {
-          fetchedData = await searchMovies(newSearchQuery);
-        } else if (newSelectedGenreId !== null) {
-          fetchedData = await fetchMoviesByGenre(newSelectedGenreId);
+        if (currentSearchQuery.trim()) {
+          fetchedData = await searchMovies(currentSearchQuery);
+        } else if (currentSelectedGenreId !== null) {
+          fetchedData = await fetchMoviesByGenre(currentSelectedGenreId);
         } else {
           fetchedData = await fetchPopularMovies();
         }
         setMovies(fetchedData);
       } catch (err) {
         setError("Failed to fetch movies. Please try again.");
-        console.error(err);
+        console.error("Error fetching movies:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMoviesBasedOnState();
+    fetchMoviesBasedOnUrlParams();
   }, [location.search]);
 
-  const handleSearch = async (query) => {
+  const handleSearch = (query) => {
     if (query.trim()) {
-      window.history.pushState(
-        {},
-        "",
-        `/?query=${encodeURIComponent(query.trim())}`
-      );
+      navigate(`/?query=${encodeURIComponent(query.trim())}`);
     } else {
-      window.history.pushState({}, "", "/");
+      navigate("/");
     }
-
-    setSearchQuery(query);
-    setSelectedGenreId(null);
   };
 
   const handleSelectGenre = (genreId) => {
     if (genreId !== null) {
-      window.history.pushState({}, "", `/?genre=${genreId}`);
+      navigate(`/?genre=${genreId}`);
     } else {
-      window.history.pushState({}, "", "/");
-
-      setSelectedGenreId(genreId);
-      setSearchQuery("");
+      navigate("/");
     }
   };
 
@@ -130,28 +110,37 @@ function HomePage() {
 
   if (error) {
     return (
-      <div className="text-center text-red-500 text-xl mt-10">{error}</div>
+      <div className="text-center text-red-500 text-xl mt-10 min-h-screen flex items-center justify-center bg-gray-950">
+        {error}
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center p-4">
-      {" "}
-      <h1 className="text-4xl font-bold text-white mb-2">Movie Recommender</h1>
-      <p className="text-lg text-gray-400 mb-8">
-        Discover your next favorite films.
+    <div className="flex flex-col items-center p-4 min-h-screen bg-gray-950">
+      <h1 className="text-5xl font-extrabold  mb-2 bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-600 animate-pulse">
+        MoviePulse
+      </h1>
+      <p className="text-lg text-gray-400 mb-8 text-center max-w-2xl mx-auto">
+        Discover your next favorite films and explore tailored recommendations.
       </p>
-      <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />{" "}
-      <GenreFilter
-        genres={genres}
-        selectedGenreId={selectedGenreId}
-        onSelectGenre={handleSelectGenre}
-      />
-      <h2 className="text-3xl font-bold text-white mb-6 text-center">
+      <div className="w-full max-w-2xl px-4 mb-8">
+        <SearchBar onSearch={handleSearch} initialQuery={searchQuery} />
+      </div>
+      <div className="w-full max-w-full px-4 mb-8">
+        {" "}
+        {/* Full width for genres */}
+        <GenreFilter
+          genres={genres}
+          selectedGenreId={selectedGenreId}
+          onSelectGenre={handleSelectGenre}
+        />
+      </div>
+      <h2 className="text-4xl font-bold  mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-teal-500 ">
         {currentTitle}
       </h2>
       {loading ? (
-        <div className="text-center text-blue-400 text-xl mt-10">
+        <div className="text-center text-blue-400 text-2xl mt-10">
           Loading movies...
         </div>
       ) : (
