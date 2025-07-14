@@ -1,7 +1,6 @@
 import React from "react";
 
 function GenreFilter({ genres, selectedGenreId, onSelectGenre }) {
-  
   const colors = [
     "bg-red-600",
     "bg-green-600",
