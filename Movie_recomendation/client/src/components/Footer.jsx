@@ -9,7 +9,7 @@ function Footer() {
         <p>&copy; {currentYear} CineGuide. All rights reserved.</p>
         <p className="mt-2">
           Built with React, Vite, and Tailwind CSS. Data provided by
-          placeholder.
+          placeholder
         </p>
 
         <div className="flex justify-center space-x-4 mt-4">
