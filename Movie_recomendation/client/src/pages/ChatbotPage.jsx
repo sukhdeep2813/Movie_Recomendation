@@ -100,7 +100,7 @@ function ChatbotPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] bg-gray-900 rounded-lg shadow-xl p-4">
-      <h2 className="text-3xl font-bold text-white mb-6 text-center">
+      <h2 className="text-3xl font-extrabold  mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-600 animate-pulse">
         Movie Chatbot
       </h2>
 
