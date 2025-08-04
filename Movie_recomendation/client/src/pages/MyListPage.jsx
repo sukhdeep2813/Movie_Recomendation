@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
-import { WatchlistContext } from "../context/WatchlistContextObject";
+import { Link } from "react-router-dom";
 import MovieCard from "../components/MovieCard";
+import { WatchlistContext } from "../context/WatchlistContextObject";
+import { FaTrash, FaPlusCircle } from "react-icons/fa";
 
 function MyListPage() {
   const {
@@ -12,54 +14,59 @@ function MyListPage() {
 
   if (loadingWatchlist) {
     return (
-      <div className="text-center text-blue-400 text-2xl mt-10">
-        Loading your watchlist...
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-center">
+        <div className="text-blue-400 text-3xl animate-pulse">
+          Loading your watchlist...
+        </div>
       </div>
     );
   }
 
   if (watchlistError) {
     return (
-      <div className="text-center text-red-500 text-2xl mt-10">
-        {watchlistError}
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-center">
+        <div className="text-red-500 text-3xl">{watchlistError}</div>
       </div>
     );
   }
 
   return (
-    <div className="text-center p-6">
-      <h2 className="text-4xl font-bold text-white mb-6">My Watchlist</h2>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <div className="text-center">
+        <h2 className="text-5xl font-bold text-white mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+          My Watchlist
+        </h2>
+      </div>
+
       {watchlistMovies.length === 0 ? (
-        <p className="text-lg text-gray-400">
-          Your watchlist is empty. Add some movies from the Home page or Movie
-          details!
-        </p>
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+          <p className="text-2xl text-gray-400 leading-relaxed mb-6">
+            Your watchlist is empty. It's time to find some movies!
+          </p>
+          <Link
+            to="/"
+            className="flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+          >
+            <FaPlusCircle className="inline-block mr-2" />
+            Explore Movies
+          </Link>
+        </div>
       ) : (
         <>
-          <p className="text-lg text-gray-400 mb-8">
+          <p className="text-lg text-gray-400 mb-8 text-center max-w-2xl mx-auto">
             Here are the movies you've added to your watchlist.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 p-4">
             {watchlistMovies.map((movie) => (
-              <div key={movie.id} className="relative">
-                <MovieCard movie={movie} />{" "}
+              <div key={movie.id} className="relative group">
+                <MovieCard movie={movie} />
                 <button
                   onClick={() => removeMovieFromWatchlist(movie.id)}
-                  className="absolute top-2 right-2 p-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
+                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-red-600 text-white shadow-lg transition-all duration-300 ease-in-out
+                             opacity-0 group-hover:opacity-100 transform group-hover:scale-110"
                   aria-label="Remove from watchlist"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 01-2 0v6a1 1 0 112 0V8z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <FaTrash className="h-5 w-5" />
                 </button>
               </div>
             ))}
