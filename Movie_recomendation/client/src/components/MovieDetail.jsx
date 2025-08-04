@@ -2,17 +2,18 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchMovieDetails, IMAGE_BASE_URL } from "../api/tmdb";
 import { WatchlistContext } from "../context/WatchlistContextObject";
+import { FaHeart, FaStar, FaArrowLeft } from "react-icons/fa";
 
 function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const { addMovieToWatchlist, removeMovieFromWatchlist, isMovieInWatchlist } =
     useContext(WatchlistContext);
 
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const getMovieDetails = async () => {
@@ -28,7 +29,6 @@ function MovieDetail() {
         setLoading(false);
       }
     };
-
     if (id) {
       getMovieDetails();
     }
@@ -38,24 +38,43 @@ function MovieDetail() {
     ? isMovieInWatchlist(movieDetails.id)
     : false;
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleWatchlistToggle = () => {
+    if (inWatchlist) {
+      removeMovieFromWatchlist(movieDetails.id);
+    } else {
+      addMovieToWatchlist(movieDetails.id);
+      setShowConfirmation(true);
+
+      setTimeout(() => setShowConfirmation(false), 3000);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="text-center text-blue-400 text-2xl mt-10">
-        Loading movie details...
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-center">
+        <div className="text-blue-400 text-3xl animate-pulse">
+          Loading movie details...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-500 text-2xl mt-10">{error}</div>
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-center">
+        <div className="text-red-500 text-3xl">{error}</div>
+      </div>
     );
   }
 
   if (!movieDetails) {
     return (
-      <div className="text-center text-gray-400 text-2xl mt-10">
-        Movie not found.
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-center">
+        <div className="text-gray-400 text-3xl">Movie not found.</div>
       </div>
     );
   }
@@ -63,6 +82,10 @@ function MovieDetail() {
   const posterUrl = movieDetails.poster_path
     ? `${IMAGE_BASE_URL}w500${movieDetails.poster_path}`
     : "https://via.placeholder.com/500x750?text=No+Image";
+
+  const backdropUrl = movieDetails.backdrop_path
+    ? `${IMAGE_BASE_URL}original${movieDetails.backdrop_path}`
+    : null;
 
   const formattedRating = movieDetails.vote_average
     ? movieDetails.vote_average.toFixed(1)
@@ -75,69 +98,76 @@ function MovieDetail() {
     ? movieDetails.genres.map((g) => g.name).join(", ")
     : "N/A";
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  const handleWatchlistToggle = () => {
-    if (inWatchlist) {
-      removeMovieFromWatchlist(movieDetails.id);
-    } else {
-      addMovieToWatchlist(movieDetails.id);
-    }
-  };
-
   return (
-    <div className="bg-gray-700 rounded-lg shadow-xl p-6 flex flex-col md:flex-row gap-6 items-start">
-      <div className="md:w-1/3 flex-shrink-0">
-        <img
-          src={posterUrl}
-          alt={movieDetails.title}
-          className="w-full h-auto rounded-lg shadow-md"
-        />
+    <div className="relative min-h-screen">
+      {backdropUrl && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backdropUrl})` }}
+        >
+          <div className="absolute inset-0 bg-black opacity-70"></div>
+        </div>
+      )}
+
+      <div className="relative z-10 container mx-auto p-8 md:p-12 lg:p-16 text-white flex flex-col md:flex-row gap-8 lg:gap-12 items-start animate-fade-in-up">
+        <div className="md:w-1/3 lg:w-1/4 flex-shrink-0">
+          <img
+            src={posterUrl}
+            alt={movieDetails.title}
+            className="w-full h-auto rounded-xl shadow-2xl border-4 border-gray-800 transform transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+
+        <div className="md:w-2/3 lg:w-3/4 flex flex-col">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-2">
+            {movieDetails.title}
+          </h2>
+          <p className="text-xl text-gray-400 mb-4">({releaseYear})</p>
+
+          <div className="flex flex-wrap items-center gap-4 text-lg mb-6">
+            <span className="bg-green-600 text-gray-900 px-3 py-1 rounded-lg font-bold">
+              <FaStar className="inline-block mr-1 text-yellow-300" />
+              {formattedRating}
+            </span>
+            {movieGenres !== "N/A" && (
+              <span className="text-gray-300">{movieGenres}</span>
+            )}
+          </div>
+
+          <p className="text-gray-300 leading-relaxed mb-6">
+            {movieDetails.overview || "No overview available."}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4 mt-auto">
+            <button
+              onClick={handleWatchlistToggle}
+              className={`flex items-center px-6 py-3 font-semibold rounded-lg shadow-md transition duration-300 transform hover:scale-105 ease-in-out
+                ${
+                  inWatchlist
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
+            >
+              <FaHeart className="inline-block mr-2" />
+              {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
+            </button>
+
+            <button
+              onClick={handleBack}
+              className="flex items-center px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 transition duration-300 transform hover:scale-105"
+            >
+              <FaArrowLeft className="inline-block mr-2" />
+              Back
+            </button>
+          </div>
+        </div>
       </div>
-      <div className="md:w-2/3 flex flex-col">
-        <h2 className="text-4xl font-bold text-white mb-2">
-          {movieDetails.title} ({releaseYear})
-        </h2>
-        <div className="flex items-center text-lg text-gray-300 mb-4">
-          <span className="bg-green-600 text-gray-900 px-3 py-1 rounded-lg font-bold mr-3">
-            ⭐ {formattedRating}
-          </span>
-          {movieGenres !== "N/A" && (
-            <span className="text-gray-400">{movieGenres}</span>
-          )}
-        </div>
-        <p className="text-gray-300 leading-relaxed mb-6">
-          {movieDetails.overview || "No overview available."}
-        </p>
 
-        <div className="text-gray-400 text-sm mt-auto border-t border-gray-600 pt-4">
-          <p>Tagline: {movieDetails.tagline || "N/A"}</p>
-          <p>Status: {movieDetails.status || "N/A"}</p>
+      {showConfirmation && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 p-4 bg-green-600 text-white rounded-lg shadow-xl animate-fade-in-down">
+          Movie added to your watchlist!
         </div>
-
-        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
-          <button
-            onClick={handleWatchlistToggle}
-            className={`px-6 py-3 font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-300 ease-in-out
-              ${
-                inWatchlist
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-500 focus:ring-offset-gray-700"
-                  : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-gray-700"
-              } text-white`}
-          >
-            {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
-          </button>
-
-          <button
-            onClick={handleBack}
-            className="px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-700 transition duration-300 ease-in-out"
-          >
-            ← Back to Movies
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
