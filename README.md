@@ -51,7 +51,7 @@ For static HTML/CSS/JS projects, simply open `index.html` in your browser.
 - **JavaScript** (main language)
 - **HTML5 & CSS3**
 - **Tailwind CSS**
-- **React** framework
+- **React Framework** 
 - **Node.js**
 - **Express**
 - **Vite**
