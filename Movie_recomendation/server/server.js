@@ -49,4 +49,4 @@ app.listen(PORT, () => {
   console.log(`Client URL expected: ${CLIENT_URL}`);
 });
 
-module.export = app;
+module.exports = app;
