@@ -39,6 +39,7 @@ const autoRoutes = require("./routes/auth");
 const watchlistRoutes = require("./routes/watchlist");
 const recommendationRoutes = require("./routes/chatbot");
 
+app.get("/", (req, res) => res.send("API is running!"));
 app.use("/api/auth", autoRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/chatbot", recommendationRoutes);
